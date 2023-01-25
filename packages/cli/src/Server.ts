@@ -122,6 +122,7 @@ import {
 } from '@/UserManagement/UserManagementHelper';
 import { getInstance as getMailerInstance } from '@/UserManagement/email';
 import * as Db from '@/Db';
+import type { DatabaseType } from '@db/types';
 import type {
 	ICredentialsDb,
 	ICredentialsOverwrite,

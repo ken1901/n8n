@@ -1,3 +1,4 @@
+import type { MigrationClass } from '@db/types';
 import { InitialMigration1587669153312 } from './1587669153312-InitialMigration';
 import { WebhookModel1589476000887 } from './1589476000887-WebhookModel';
 import { CreateIndexStoppedAt1594828256133 } from './1594828256133-CreateIndexStoppedAt';
@@ -30,7 +31,7 @@ import { DeleteExecutionsWithWorkflows1673268682475 } from './1673268682475-Dele
 import { CreateLdapEntities1674509946020 } from './1674509946020-CreateLdapEntities';
 import { PurgeInvalidWorkflowConnections1675940580449 } from './1675940580449-PurgeInvalidWorkflowConnections';
 
-export const postgresMigrations = [
+export const postgresMigrations: MigrationClass[] = [
 	InitialMigration1587669153312,
 	WebhookModel1589476000887,
 	CreateIndexStoppedAt1594828256133,
@@ -61,5 +62,5 @@ export const postgresMigrations = [
 	MessageEventBusDestinations1671535397530,
 	DeleteExecutionsWithWorkflows1673268682475,
 	CreateLdapEntities1674509946020,
-	PurgeInvalidWorkflowConnections1675940580449
+	PurgeInvalidWorkflowConnections1675940580449,
 ];

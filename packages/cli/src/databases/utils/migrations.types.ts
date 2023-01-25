@@ -8,7 +8,7 @@ export namespace PinData {
 	export type FetchedWorkflow = { id: number; pinData: string | Old };
 }
 
-export function isObjectLiteral(maybeObject: unknown): maybeObject is { [key: string]: string } {
+function isObjectLiteral(maybeObject: unknown): maybeObject is { [key: string]: string } {
 	return typeof maybeObject === 'object' && maybeObject !== null && !Array.isArray(maybeObject);
 }
 

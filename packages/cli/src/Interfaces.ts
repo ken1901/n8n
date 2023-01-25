@@ -22,15 +22,13 @@ import type {
 	WorkflowExecuteMode,
 } from 'n8n-workflow';
 
-import type { ActiveWorkflowRunner } from '@/ActiveWorkflowRunner';
-
 import type { WorkflowExecute } from 'n8n-core';
-
 import type PCancelable from 'p-cancelable';
 import type { FindOperator, Repository } from 'typeorm';
-
 import type { ChildProcess } from 'child_process';
 
+import type { ActiveWorkflowRunner } from '@/ActiveWorkflowRunner';
+import type { DatabaseType } from '@db/types';
 import type { AuthIdentity, AuthProviderType } from '@db/entities/AuthIdentity';
 import type { AuthProviderSyncHistory } from '@db/entities/AuthProviderSyncHistory';
 import type { InstalledNodes } from '@db/entities/InstalledNodes';
@@ -141,7 +139,6 @@ export type ICredentialsDecryptedDb = ICredentialsBase & ICredentialsDecrypted;
 
 export type ICredentialsDecryptedResponse = ICredentialsDecryptedDb;
 
-export type DatabaseType = 'mariadb' | 'postgresdb' | 'mysqldb' | 'sqlite';
 export type SaveExecutionDataType = 'all' | 'none';
 
 export interface IExecutionBase {

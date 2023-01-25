@@ -1,3 +1,4 @@
+import type { MigrationClass } from '@db/types';
 import { InitialMigration1588157391238 } from './1588157391238-InitialMigration';
 import { WebhookModel1592447867632 } from './1592447867632-WebhookModel';
 import { CreateIndexStoppedAt1594902918301 } from './1594902918301-CreateIndexStoppedAt';
@@ -32,7 +33,7 @@ import { DeleteExecutionsWithWorkflows1673268682475 } from './1673268682475-Dele
 import { CreateLdapEntities1674509946020 } from './1674509946020-CreateLdapEntities';
 import { PurgeInvalidWorkflowConnections1675940580449 } from './1675940580449-PurgeInvalidWorkflowConnections';
 
-export const mysqlMigrations = [
+export const mysqlMigrations: MigrationClass[] = [
 	InitialMigration1588157391238,
 	WebhookModel1592447867632,
 	CreateIndexStoppedAt1594902918301,
@@ -65,5 +66,5 @@ export const mysqlMigrations = [
 	MessageEventBusDestinations1671535397530,
 	DeleteExecutionsWithWorkflows1673268682475,
 	CreateLdapEntities1674509946020,
-	PurgeInvalidWorkflowConnections1675940580449
+	PurgeInvalidWorkflowConnections1675940580449,
 ];

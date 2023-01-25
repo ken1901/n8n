@@ -4,6 +4,7 @@ module.exports = {
 	testEnvironmentOptions: {
 		url: 'http://localhost/',
 	},
+	testTimeout: 10_000,
 	globalSetup: '<rootDir>/test/setup.ts',
 	globalTeardown: '<rootDir>/test/teardown.ts',
 	setupFilesAfterEnv: ['<rootDir>/test/setup-mocks.ts', '<rootDir>/test/extend-expect.ts'],
