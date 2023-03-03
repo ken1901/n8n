@@ -219,7 +219,7 @@ test('POST /nodes should allow installing packages that could not be loaded', as
 	mocked(hasPackageLoaded).mockReturnValueOnce(false);
 	mocked(checkNpmPackageStatus).mockResolvedValueOnce({ status: 'OK' });
 
-	mockLoadNodesAndCredentials.loadNpmModule.mockImplementationOnce(mockedEmptyPackage);
+	mockLoadNodesAndCredentials.installNpmModule.mockImplementationOnce(mockedEmptyPackage);
 
 	const { statusCode } = await authAgent(ownerShell).post('/nodes').send({
 		name: utils.installedPackagePayload().packageName,
