@@ -1,11 +1,14 @@
 import ClientOAuth2 from 'client-oauth2';
 import Csrf from 'csrf';
 import express from 'express';
+import Handlebars from 'handlebars';
 import get from 'lodash.get';
 import omit from 'lodash.omit';
 import set from 'lodash.set';
 import split from 'lodash.split';
 import unset from 'lodash.unset';
+import { readFileSync } from 'fs';
+import { resolve as pathResolve } from 'path';
 import { Credentials, UserSettings } from 'n8n-core';
 import type {
 	WorkflowExecuteMode,
@@ -14,7 +17,6 @@ import type {
 	IDataObject,
 } from 'n8n-workflow';
 import { LoggerProxy } from 'n8n-workflow';
-import { resolve as pathResolve } from 'path';
 
 import * as Db from '@/Db';
 import * as ResponseHelper from '@/ResponseHelper';
@@ -33,8 +35,17 @@ import { getInstanceBaseUrl } from '@/UserManagement/UserManagementHelper';
 import { Container } from 'typedi';
 
 export const oauth2CredentialController = express.Router();
-var app = express();
-app.set('view engine', 'ejs');
+
+let errorCallbackTemplate: HandlebarsTemplateDelegate<{ errorResponse: string }>;
+
+const respondWithError = (res: express.Response, errorResponse: string) => {
+	if (!errorCallbackTemplate)
+		errorCallbackTemplate = Handlebars.compile(
+			readFileSync(pathResolve(TEMPLATES_DIR, 'oauth-error-callback.ejs'), { encoding: 'utf-8' }),
+		);
+	res.write(errorCallbackTemplate({ errorResponse }));
+	res.end();
+};
 
 /**
  * Initialize Logger if needed
@@ -114,7 +125,7 @@ oauth2CredentialController.get(
 		);
 
 		const token = new Csrf();
-		// Generate a CSRF prevention token and send it as a OAuth2 state stringma/ERR
+		// Generate a CSRF prevention token and send it as a OAuth2 state string
 		const csrfSecret = token.secretSync();
 		const state = {
 			token: token.create(csrfSecret),
@@ -192,8 +203,8 @@ oauth2CredentialController.get(
 			if (!code || !stateEncoded) {
 				const errorResponse = `Insufficient parameters for OAuth2 callback. Received following query parameters: ${JSON.stringify(
 					req.query,
-				)}`
-				return res.render(pathResolve(TEMPLATES_DIR, 'oauth-error-callback.ejs'), {errorResponse: errorResponse});
+				)}`;
+				return respondWithError(res, errorResponse);
 			}
 
 			let state;
@@ -203,8 +214,8 @@ oauth2CredentialController.get(
 					token: string;
 				};
 			} catch (error) {
-				const errorResponse = "'Invalid state format returned'"
-				return res.render(pathResolve(TEMPLATES_DIR, 'oauth-error-callback.ejs'), {errorResponse: errorResponse});
+				const errorResponse = "'Invalid state format returned'";
+				return respondWithError(res, errorResponse);
 			}
 
 			const credential = await getCredentialWithoutUser(state.cid);
@@ -214,8 +225,8 @@ oauth2CredentialController.get(
 					userId: req.user?.id,
 					credentialId: state.cid,
 				});
-				const errorResponse = "OAuth2 callback failed because of insufficient permissions"
-				return res.render(pathResolve(TEMPLATES_DIR, 'oauth-error-callback.ejs'), {errorResponse: errorResponse});
+				const errorResponse = 'OAuth2 callback failed because of insufficient permissions';
+				return respondWithError(res, errorResponse);
 			}
 
 			let encryptionKey: string;
@@ -251,8 +262,8 @@ oauth2CredentialController.get(
 					userId: req.user?.id,
 					credentialId: state.cid,
 				});
-				const errorResponse = "The OAuth2 callback state is invalid!"
-				return res.render(pathResolve(TEMPLATES_DIR, 'oauth-error-callback.ejs'), {errorResponse: errorResponse});
+				const errorResponse = 'The OAuth2 callback state is invalid!';
+				return respondWithError(res, errorResponse);
 			}
 
 			let options = {};
@@ -296,8 +307,8 @@ oauth2CredentialController.get(
 					userId: req.user?.id,
 					credentialId: state.cid,
 				});
-				const errorResponse = "Unable to get access tokens!"
-				return res.render(pathResolve(TEMPLATES_DIR, 'oauth-error-callback.ejs'), {errorResponse: errorResponse});
+				const errorResponse = 'Unable to get access tokens!';
+				return respondWithError(res, errorResponse);
 			}
 
 			if (decryptedDataOriginal.oauthTokenData) {
@@ -332,8 +343,8 @@ oauth2CredentialController.get(
 		} catch (error) {
 			// Error response
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-			const errorResponse = "error"
-			return res.render(pathResolve(TEMPLATES_DIR, 'oauth-error-callback.ejs'), {errorResponse: errorResponse});
+			const errorResponse = 'error';
+			return respondWithError(res, errorResponse);
 		}
 	},
 );
